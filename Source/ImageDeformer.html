@@ -1,0 +1,167 @@
+<html>
+<body>
+
+<div id="divUi">
+
+	<h3>Image Deformer</h3>
+
+	<p>
+		Upload an image, edit the before and after deformation nets,
+		then click Deform to distort the shape of the original image accordingly.
+		This utility is intended for "flattening" photographs
+		of printed book pages for further character-recognition work.
+	<p>
+
+	<div>
+		<label>Image to Deform:</label>
+		<input
+			type="file"
+			onchange="UiEventHandler.inputImageFile_Changed(this);"
+		></input>
+		<br />
+		<div id="divImageToDeform">
+			[No image uploaded yet.]
+		</div>
+	</div>
+
+	<div>
+		<label>Net Selected:</label>
+		<select
+			onchange="UiEventHandler.selectNetSelectedName_Changed(this);"
+		>
+			<option>Before</option>
+			<option>After</option>
+		</select>
+	</div>
+
+	<table>
+		<tr>
+			<td>
+				<div>
+					<label>Node Select:</label>
+					<table>
+						<tr>
+							<td></td>
+							<td>
+								<button
+									onclick="UiEventHandler.buttonNodeSelectUp_Clicked();"
+								>
+									Up
+								</button>
+							</td>
+							<td></td>
+						</tr>
+
+						<tr>
+							<td>
+								<button
+									onclick="UiEventHandler.buttonNodeSelectLeft_Clicked();"
+								>
+									Left
+								</button>
+							</td>
+							<td></td>
+							<td>
+								<button
+									onclick="UiEventHandler.buttonNodeSelectRight_Clicked();"
+								>
+									Right
+								</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td></td>
+							<td>
+								<button
+									onclick="UiEventHandler.buttonNodeSelectDown_Clicked();"
+								>
+									Down
+								</button>
+							</td>
+							<td></td>
+						</tr>
+
+					</table>
+				</div>
+			</td>
+
+			<td>
+				<div>
+					<label>Move Selected Node:</label>
+					<table>
+						<tr>
+							<td></td>
+							<td>
+								<button
+									onclick="UiEventHandler.buttonNodeSelectedMoveUp_Clicked();"
+								>
+									Up
+								</button>
+							</td>
+							<td></td>
+						</tr>
+
+						<tr>
+							<td>
+								<button
+									onclick="UiEventHandler.buttonNodeSelectedMoveLeft_Clicked();"
+								>
+									Left
+								</button>
+							</td>
+							<td></td>
+							<td>
+								<button
+									onclick="UiEventHandler.buttonNodeSelectedMoveRight_Clicked();"
+								>
+									Right
+								</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td></td>
+							<td>
+								<button
+									onclick="UiEventHandler.buttonNodeSelectedMoveDown_Clicked();"
+								>
+									Down
+								</button>
+							</td>
+							<td></td>
+						</tr>
+
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
+
+
+	<button
+		onclick="UiEventHandler.buttonDeform_Clicked();"
+	>
+		Deform Image by Specified Net
+	</button>
+
+	<div>
+		<label>Image Deformed:</label>
+		<br />
+		<div id="divImageDeformed">
+			[No image deformed yet.]
+		</div>
+	</div>
+
+</div>
+
+<script type="text/javascript" src="Coords.js"></script>
+<script type="text/javascript" src="DeformationNetPair.js"></script>
+<script type="text/javascript" src="ImageDeformer.js"></script>
+<script type="text/javascript" src="ImageFromCanvas.js"></script>
+<script type="text/javascript" src="ImageFromImgElement.js"></script>
+<script type="text/javascript" src="Net.js"></script>
+<script type="text/javascript" src="UiEventHandler.js"></script>
+
+</body>
+</html>
