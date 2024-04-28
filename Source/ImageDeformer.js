@@ -34,6 +34,10 @@ class ImageDeformer
 	{
 		if (this.imageToDeform != null)
 		{
+			var netPair = this.deformationNetPair;
+			var netBefore = netPair.netBeforeDeformation;
+			var netAfter = netPair.netAfterDeformation;
+
 			var canvasToDeform = this.imageToDeform.toCanvas();
 			var graphicsBefore = canvasToDeform.getContext("2d");
 
@@ -44,24 +48,80 @@ class ImageDeformer
 
 			var imageSize = this.imageToDeform.size();
 
-			var pixelPos = new Coords();
+			var pixelPosBefore = new Coords();
+			var pixelPosAfter = new Coords();
+			var pixelPosRelativeToNodeBefore = new Coords();
+			var displacement = new Coords();
 
 			for (var y = 0; y < imageSize.y; y++)
 			{
-				pixelPos.y = y;
+				pixelPosBefore.y = y;
 
 				for (var x = 0; x < imageSize.x; x++)
 				{
-					pixelPos.x = x;
+					pixelPosBefore.x = x;
 
-					var pixelAsImageData =
-						graphicsBefore.getImageData(pixelPos.x, pixelPos.y, 1, 1);
-					var pixelAsComponents = pixelAsImageData.data;
+					var pixelBeforeAsImageData = graphicsBefore.getImageData
+					(
+						pixelPosBefore.x, pixelPosBefore.y,
+						1, 1
+					);
+
+					var pixelBeforeAsComponentsRGBA =
+						pixelBeforeAsImageData.data;
+
 					var pixelColor =
-						"rgba(" + pixelAsComponents.join(",") + ")";
+						"rgba(" + pixelBeforeAsComponentsRGBA.join(",") + ")";
+
+					// Find the nearest before node.
+					var nodeIndex =
+						netBefore.nodeNearestPosGetIndex(pixelPosBefore);
+
+					var nodeBefore = netBefore.nodeAtIndex(nodeIndex);
+					var nodeAfter = netAfter.nodeAtIndex(nodeIndex);
+
+					var nodeBeforeDisplacementsToNeighbors =
+						nodeBefore.neighborDisplacements;
+
+					pixelPosRelativeToNodeBefore
+						.overwriteWith(pixelPosBefore)
+						.subtract(nodeBefore.pos);
+
+					var pixelFractionsOfDistanceTowardNeighbors =
+					[
+						displacement
+							.overwriteWith(nodeBeforeDisplacementsToNeighbors[0])
+							.normalize()
+							.dotProduct(pixelPosRelativeToNodeBefore)
+							/ nodeBeforeDisplacementsToNeighbors[0].magnitude(),
+
+						displacement
+							.overwriteWith(nodeBeforeDisplacementsToNeighbors[1])
+							.normalize()
+							.dotProduct(pixelPosRelativeToNodeBefore)
+							/ nodeBeforeDisplacementsToNeighbors[1].magnitude()
+					];
+
+					var nodeAfterDisplacementsToNeighbors =
+						nodeAfter.neighborDisplacements;
+
+					pixelPosAfter
+						.overwriteWith(nodeAfter.pos)
+						.add
+						(
+							displacement
+								.overwriteWith(nodeAfterDisplacementsToNeighbors[0])
+								.multiplyScalar(pixelFractionsOfDistanceTowardNeighbors[0])
+						)
+						.add
+						(
+							displacement
+								.overwriteWith(nodeAfterDisplacementsToNeighbors[1])
+								.multiplyScalar(pixelFractionsOfDistanceTowardNeighbors[1])
+						);
 
 					graphicsAfter.fillStyle = pixelColor;
-					graphicsAfter.fillRect(pixelPos.x, pixelPos.y, 1, 1);
+					graphicsAfter.fillRect(pixelPosAfter.x, pixelPosAfter.y, 1, 1);
 				}
 			}
 		}

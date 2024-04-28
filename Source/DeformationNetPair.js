@@ -40,33 +40,26 @@ class DeformationNetPair
 			}
 		);
 
-		var netAfter = new Net
-		(
-			netSizeInNodes,
-			nodePositionRowsAfter
-		);
+		var nodeRowsAfter =
+			nodePositionRowsAfter.map(row => row.map(x => new NetNode(x) ) );
+
+		var netAfter = new Net(netSizeInNodes, nodeRowsAfter);
 
 		var netBefore = netAfter.clone();
-		var nodePositionRowsBefore = netAfter.nodePositionRows;
+		var nodeRowsBefore = netAfter.nodeRows;
 		var center = size.clone().divideScalar(2);
-		nodePositionRowsBefore.forEach
+		nodeRowsBefore.forEach
 		(
 			row =>
 			{
 				row.forEach
 				(
-					nodePos =>
+					node =>
 					{
-						nodePos.subtract
-						(
-							center
-						).multiplyScalar
-						(
-							scaleFactor
-						).add
-						(
-							center
-						)
+						node.pos
+							.subtract(center)
+							.multiplyScalar(scaleFactor)
+							.add(center);
 					}
 				);
 			}
